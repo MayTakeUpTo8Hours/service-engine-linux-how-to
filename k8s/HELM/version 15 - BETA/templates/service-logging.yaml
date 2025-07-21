@@ -1,0 +1,15 @@
+{{ if .Values.zenonLoggingServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.zenonLoggingServer.name }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.zenonLoggingServer.name }}
+  ports:
+    - protocol: TCP
+      port: 50780
+      targetPort: 50780
+      nodePort: {{ .Values.zenonLoggingServer.port }}
+{{ end }}

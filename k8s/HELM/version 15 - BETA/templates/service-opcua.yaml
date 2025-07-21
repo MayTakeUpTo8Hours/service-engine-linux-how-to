@@ -1,0 +1,17 @@
+{{- if .Values.serviceEngine.opcUaService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceEngine.name }}-opcua
+spec:
+  type: LoadBalancer
+  externalIPs:
+  - {{ .Values.serviceEngine.opcUaService.serviceIp }}
+  selector:
+    app: {{ .Values.serviceEngine.name }}
+  ports:
+    - protocol: TCP
+      name: "opcua"
+      port: {{ .Values.serviceEngine.opcUaService.port }}
+      targetPort: {{ .Values.serviceEngine.opcUaService.port }}
+{{- end }}

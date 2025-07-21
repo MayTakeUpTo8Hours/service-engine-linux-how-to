@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.serviceEngine.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceEngine.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceEngine.name }}
+    spec:
+      containers:
+        - name: {{ .Values.serviceEngine.name }}
+          image: {{ .Values.serviceEngine.image }}:{{ .Values.version.tag }}
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          env:
+            - name: RUNTIME_LICENSING_SERIAL0
+              value: {{ .Values.licensing.serviceEngine.serial }}
+            - name: RUNTIME_LICENSING_SERIAL0_LOCATION
+              value: {{ .Values.licensing.serviceEngine.server }}
+            - name: PROCESSGATEWAY_LICENSING_SERIAL0
+              value: {{ .Values.licensing.processGateway.serial }}
+            - name: PROCESSGATEWAY_LICENSING_SERIAL0_LOCATION
+              value: {{ .Values.licensing.processGateway.server }}
+            - name: LOGIC_LICENSING_SERIAL0
+              value: {{ .Values.licensing.logicService.serial }}
+            - name: LOGIC_LICENSING_SERIAL0_LOCATION
+              value: {{ .Values.licensing.logicService.server }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: {{ .Values.volumes.configPath }}
+      volumes:
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: zenon-config-pvc-1
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{ end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8}}
+      {{ end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8}}
+      {{- end }}
+---
+{{ if .Values.zenonLoggingServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.zenonLoggingServer.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.zenonLoggingServer.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.zenonLoggingServer.name }}
+    spec:
+      containers:
+        - name: {{ .Values.zenonLoggingServer.name }}
+          image: {{ .Values.zenonLoggingServer.image }}:{{ .Values.version.tag }}
+          ports:
+            - containerPort: 50780
+          volumeMounts:
+            - name: config-volume
+              mountPath: {{ .Values.volumes.configPath }}
+            - name: logging-volume
+              mountPath: {{ .Values.volumes.loggingPath }}
+      volumes:
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: zenon-config-pvc
+        - name: logging-volume
+          persistentVolumeClaim:
+            claimName: zenon-logging-server-logging-pvc
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{ end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8}}
+      {{ end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8}}
+      {{- end }}
+{{ end }}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: Service-Engine
+description: IN-DEVELOPMENT COPA-DATA Service Engine Helm Chart
+
+type: application
+
+version: 15.0.0
+
+appVersion: "15.0.999999"

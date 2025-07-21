@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  Service-Engine:
+  - apiVersion: v2
+    appVersion: 15.0.999999
+    created: "2025-07-21T08:46:31.781486565Z"
+    description: IN-DEVELOPMENT COPA-DATA Service Engine Helm Chart
+    digest: c6cc6c26db1779437b88ced47f7c5b2809da231ae48d4fd4829f57573c2c9c43
+    name: Service-Engine
+    type: application
+    urls:
+    - https://github.com/MayTakeUpTo8Hours/service-engine-linux-how-to/releases/download/Service-Engine-15.0.0/Service-Engine-15.0.0.tgz
+    version: 15.0.0
+generated: "2025-07-21T08:46:31.781491283Z"
